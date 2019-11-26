@@ -1,0 +1,1656 @@
+-- FreeFem++ v  4.200001 (date Sun 30 Jun 2019 11:13:40 PM +0430 git no git)
+ Load: lg_fem lg_mesh lg_mesh3 eigenvalue 
+    1 : include "getARGV.idp" // for gestion of FreeFem++ argument and in version 3.10-1 FH
+    2 :  // F. Hecht 
+    3 :  // Usage:  getARGV(n,defaultvalue) // get the fist used default valeu
+    4 :  //  or     getARGV(after,defaultvalue) // get the arg after after 
+    5 :  // the type of delfaut value given the return type: int,double, string
+    6 :  // Modif version 3.54-2  Jan 2018 (add ones include)
+    7 :  IFMACRO(!getARGVidp)
+    8 &  macro getARGVidp 1 //
+    9 &  
+   10 &  
+   11 &  func int usedARGV(int n)
+   12 & {
+   13 &   int k=1,ii=1,kk=1,ret=-1;
+   14 &   for(int i=1;i<ARGV.n;++i)
+   15 &    {
+   16 &    // cout <<i<< " "<< ARGV[i] << " " <<(ARGV[i]=="-v") << " " << kk << "==" 
+   17 &    //      << n << " " << ARGV[i].rfind("dp") << " " <<ARGV[i].length-2  << endl;
+   18 &         
+   19 &        if(ARGV[i]=="-v") i++;
+   20 &        else if(ARGV[i]=="-fglut") i++;
+   21 &        else if(ARGV[i]=="-ffg") i++;
+   22 &        else if(ARGV[i]=="-glut") i++;
+   23 &        else if(ARGV[i]=="-f") i++;
+   24 &        else if(ARGV[i]=="-nw") ii;
+   25 &        else if(ARGV[i]=="-wait") ii;
+   26 &        else if(ARGV[i]=="-ne") ii;
+   27 &        else if(ARGV[i]=="-cd") ii;
+   28 &        //else if(ARGV[i].rfind(".edp")==ARGV[i].length-4 ) ii;
+   29 &        else if(i==1) ii;
+   30 &        else if(kk++==n) {ret=i;}
+   31 &       // else cout << " +++ \n";
+   32 &      }
+   33 &    //  cout << ret << endl;
+   34 &     return ret;
+   35 & }
+   36 & 
+   37 & func int usedARGV(string after)
+   38 & {
+   39 &   int ret=-1;
+   40 &   for(int i=ARGV.n-1;i>=0;--i)        
+   41 &        if(ARGV[i]==after) { ret=++i; break;}
+   42 &   if(ARGV.n<ret) ret=-1;
+   43 &   return ret;
+   44 & }
+   45 & 
+   46 & func int getARGV(int n,int default)
+   47 & {
+   48 &    int d=default;
+   49 &    int k=usedARGV(n);
+   50 &    if(k>0) d=strtol(ARGV[k]);
+   51 &     return d;
+   52 & }
+   53 & func real getARGV(int n,real default)
+   54 & {
+   55 &    real d=default;
+   56 &    int k=usedARGV(n);
+   57 &    if(k>0) d=strtod(ARGV[k]);
+   58 &    return d;
+   59 & }
+   60 & func string getARGV(int n,string default)
+   61 & {
+   62 &    string d=default;
+   63 &    int k=usedARGV(n);
+   64 &    if(k>0) d=ARGV[k];
+   65 &     return d;
+   66 & }
+   67 & 
+   68 & func int getARGV(string after,int default)
+   69 & {
+   70 &    int d=default;
+   71 &    int k=usedARGV(after);
+   72 &    if(k>0) d=strtol(ARGV[k]);
+   73 &     return d;
+   74 & }
+   75 & func real getARGV(string after,real default)
+   76 & {
+   77 &    real d=default;
+   78 &    int k=usedARGV(after);
+   79 &    if(k>0) d=strtod(ARGV[k]);
+   80 &    return d;
+   81 & }
+   82 & func string getARGV(string after,string default)
+   83 & {
+   84 &    string d=default;
+   85 &    int k=usedARGV(after);
+   86 &    if(k>0) d=ARGV[k];
+   87 &     return d;
+   88 & }
+   89 & 
+   90 & /*
+   91 & cout << getARGV(1,100) << endl;
+   92 & cout << getARGV(2,200.) << endl;
+   93 & cout << getARGV(3,"300.000") << endl;
+   94 & cout << getARGV("-n"," xxx") << endl;
+   95 & */
+   96 & ENDIFMACRO
+    8 :  macro getARGVidp 1 1 //
+    9 :  
+   10 :  
+   11 :  func int usedARGV(int n)
+   12 : {
+   13 :   int k=1,ii=1,kk=1,ret=-1;
+   14 :   for(int i=1;i<ARGV.n;++i)
+   15 :    {
+   16 :    // cout <<i<< " "<< ARGV[i] << " " <<(ARGV[i]=="-v") << " " << kk << "==" 
+   17 :    //      << n << " " << ARGV[i].rfind("dp") << " " <<ARGV[i].length-2  << endl;
+   18 :         
+   19 :        if(ARGV[i]=="-v") i++;
+   20 :        else if(ARGV[i]=="-fglut") i++;
+   21 :        else if(ARGV[i]=="-ffg") i++;
+   22 :        else if(ARGV[i]=="-glut") i++;
+   23 :        else if(ARGV[i]=="-f") i++;
+   24 :        else if(ARGV[i]=="-nw") ii;
+   25 :        else if(ARGV[i]=="-wait") ii;
+   26 :        else if(ARGV[i]=="-ne") ii;
+   27 :        else if(ARGV[i]=="-cd") ii;
+   28 :        //else if(ARGV[i].rfind(".edp")==ARGV[i].length-4 ) ii;
+   29 :        else if(i==1) ii;
+   30 :        else if(kk++==n) {ret=i;}
+   31 :       // else cout << " +++ \n";
+   32 :      }
+   33 :    //  cout << ret << endl;
+   34 :     return ret;
+   35 : }
+   36 : 
+   37 : func int usedARGV(string after)
+   38 : {
+   39 :   int ret=-1;
+   40 :   for(int i=ARGV.n-1;i>=0;--i)        
+   41 :        if(ARGV[i]==after) { ret=++i; break;}
+   42 :   if(ARGV.n<ret) ret=-1;
+   43 :   return ret;
+   44 : }
+   45 : 
+   46 : func int getARGV(int n,int default)
+   47 : {
+   48 :    int d=default;
+   49 :    int k=usedARGV(n);
+   50 :    if(k>0) d=strtol(ARGV[k]);
+   51 :     return d;
+   52 : }
+   53 : func real getARGV(int n,real default)
+   54 : {
+   55 :    real d=default;
+   56 :    int k=usedARGV(n);
+   57 :    if(k>0) d=strtod(ARGV[k]);
+   58 :    return d;
+   59 : }
+   60 : func string getARGV(int n,string default)
+   61 : {
+   62 :    string d=default;
+   63 :    int k=usedARGV(n);
+   64 :    if(k>0) d=ARGV[k];
+   65 :     return d;
+   66 : }
+   67 : 
+   68 : func int getARGV(string after,int default)
+   69 : {
+   70 :    int d=default;
+   71 :    int k=usedARGV(after);
+   72 :    if(k>0) d=strtol(ARGV[k]);
+   73 :     return d;
+   74 : }
+   75 : func real getARGV(string after,real default)
+   76 : {
+   77 :    real d=default;
+   78 :    int k=usedARGV(after);
+   79 :    if(k>0) d=strtod(ARGV[k]);
+   80 :    return d;
+   81 : }
+   82 : func string getARGV(string after,string default)
+   83 : {
+   84 :    string d=default;
+   85 :    int k=usedARGV(after);
+   86 :    if(k>0) d=ARGV[k];
+   87 :     return d;
+   88 : }
+   89 : 
+   90 : /*
+   91 : cout << getARGV(1,100) << endl;
+   92 : cout << getARGV(2,200.) << endl;
+   93 : cout << getARGV(3,"300.000") << endl;
+   94 : cout << getARGV("-n"," xxx") << endl;
+   95 : */
+   96 : 
+    2 : 
+    3 : // Parameters
+    4 : //real theta = 4.*pi/3.;
+    5 : macro Grad(u) [dx(u), dy(u)]  )   [dx(u), dy(u)] //
+    6 : //
+    7 : func z = 0;
+ *** Warning  The identifier z hide a Global identifier  
+
+    8 : func beta = 500;
+    9 : func co = 0.5;
+   10 : //func uexact = (x^2+y^2)^(1/4) * sin(atan(y/x)/2);
+   11 : func uexact = -1*(1/4)*((x^2 + y^2)-1);
+   12 : int n = getARGV("-n", 1);
+   13 : // Mesh
+   14 : //real d = 0.00001; //width of U-shape
+   15 : //border L1(t=0, 1-d){x=-1; y=-d-t;}
+   16 : //border L2(t=0, 1-d){x=-1; y=1-t;}
+   17 : //border B(t=0, 2){x=-1+t; y=-1;}
+   18 : //border C1(t=0, 1){x=t-1; y=d;}
+   19 : //border C2(t=0, 2*d){x=0; y=d-t;}
+   20 : //border C3(t=0, 1){x=-t; y=-d;}
+   21 : //border R(t=0, 2){x=1; y=-1+t;}
+   22 : //border T(t=0, 2){x=1-t; y=1;}
+   23 : //int n = 100;
+   24 : //mesh Th = buildmesh(L1(n/2) + L2(n/2) + B(n) + C1(n) + C2(3) + C3(n) + R(n) + T(n));
+   25 : 
+   26 : //for (int i = 0; i < ARGV.n; i++)
+   27 : //    cout << ARGV[i] << endl;
+   28 : //int n=ARGV[0];
+   29 : 
+   30 : //string d = getARGV("-d");
+   31 : string PREFIX = "n_"+n+"_results/";
+   32 : mesh Th = square(n,n);
+   33 : 
+   34 : // Fespace
+   35 : fespace Vh(Th, P2); //P2 conforming triangular FEM
+   36 : Vh phi, w, f=1;
+   37 : 
+   38 : // Solve
+   39 : //check the grad in the weak form
+   40 : solve Laplace(phi, w)
+   41 :     =  int2d(Th)(
+   42 :           //dx(phi)*dx(w)
+   43 :         //+ dy(phi)*dy(w)
+   44 :         Grad(phi)    [dx(phi), dy(phi)] ' * Grad(w)    [dx(w), dy(w)] 
+   45 :     )
+   46 :     - int2d(Th)(
+   47 :           f*w
+   48 :     )
+   49 :     //+ beta * int1d(Th)(phi*phi)
+   50 :      + on(1,2,3,4, phi=z)
+   51 : //    + on(L1,L2,B,C1,C2,C3,R,T, phi=z)
+   52 :     ;
+   53 : 
+   54 : // Plot
+   55 : //plot(phi, wait=true, ps="solution.eps"); //Plot phi
+   56 : //plot(Th, wait = true,  ps="mesh.eps" );
+   57 : 
+   58 : //Vh err = phi-(xˆ2+yˆ2-1)/4;
+   59 : //plot(err,value=true,wait=true);
+   60 : 
+   61 : //cout<<"L2 Error" << sqrt( int2d(Th)((phi-(xˆ2+yˆ2-1)/4)ˆ2) ) << endl;
+   62 : cout <<"L2 Error: " << sqrt(int2d(Th)((phi - uexact)^2));
+   63 : string path = PREFIX + "Th.msh";
+   64 : // Save mesh
+   65 : //savemesh(Th,path);// Parameters
+   66 : 
+   67 : 
+   68 : 
+   69 : //to build a gnuplot data file
+   70 : {
+   71 :     ofstream ff(PREFIX+"data.csv");
+   72 :     for (int i = 0; i < Th.nt; i++)
+   73 :     {
+   74 :         for (int j = 0; j < 3; j++)
+   75 :             ff << Th[i][j].x << ","<< Th[i][j].y << "," << phi[][Vh(i,j)] << endl;
+   76 : 
+   77 :         ff << Th[i][0].x << "," << Th[i][0].y << "," << phi[][Vh(i,0)] <<
+   78 :         "\n\n\n";
+   79 :     }
+   80 : }
+   81 :  sizestack + 1024 =2456  ( 1432 )
+
+  -- Square mesh : nb vertices  =256 ,  nb triangles = 450 ,  nb boundary edges 60
+  -- Solve : 
+          min -7.669e-50  max 0.0736708
+L2 Error: 0.041261times: compile 0.345067s, execution 0.275914s,  mpirank:0
+ CodeAlloc : nb ptr  3503,  size :428952 mpirank: 0
+Ok: Normal End
+-- FreeFem++ v  4.200001 (date Sun 30 Jun 2019 11:13:40 PM +0430 git no git)
+ Load: lg_fem lg_mesh lg_mesh3 eigenvalue 
+    1 : include "getARGV.idp" // for gestion of FreeFem++ argument and in version 3.10-1 FH
+    2 :  // F. Hecht 
+    3 :  // Usage:  getARGV(n,defaultvalue) // get the fist used default valeu
+    4 :  //  or     getARGV(after,defaultvalue) // get the arg after after 
+    5 :  // the type of delfaut value given the return type: int,double, string
+    6 :  // Modif version 3.54-2  Jan 2018 (add ones include)
+    7 :  IFMACRO(!getARGVidp)
+    8 &  macro getARGVidp 1 //
+    9 &  
+   10 &  
+   11 &  func int usedARGV(int n)
+   12 & {
+   13 &   int k=1,ii=1,kk=1,ret=-1;
+   14 &   for(int i=1;i<ARGV.n;++i)
+   15 &    {
+   16 &    // cout <<i<< " "<< ARGV[i] << " " <<(ARGV[i]=="-v") << " " << kk << "==" 
+   17 &    //      << n << " " << ARGV[i].rfind("dp") << " " <<ARGV[i].length-2  << endl;
+   18 &         
+   19 &        if(ARGV[i]=="-v") i++;
+   20 &        else if(ARGV[i]=="-fglut") i++;
+   21 &        else if(ARGV[i]=="-ffg") i++;
+   22 &        else if(ARGV[i]=="-glut") i++;
+   23 &        else if(ARGV[i]=="-f") i++;
+   24 &        else if(ARGV[i]=="-nw") ii;
+   25 &        else if(ARGV[i]=="-wait") ii;
+   26 &        else if(ARGV[i]=="-ne") ii;
+   27 &        else if(ARGV[i]=="-cd") ii;
+   28 &        //else if(ARGV[i].rfind(".edp")==ARGV[i].length-4 ) ii;
+   29 &        else if(i==1) ii;
+   30 &        else if(kk++==n) {ret=i;}
+   31 &       // else cout << " +++ \n";
+   32 &      }
+   33 &    //  cout << ret << endl;
+   34 &     return ret;
+   35 & }
+   36 & 
+   37 & func int usedARGV(string after)
+   38 & {
+   39 &   int ret=-1;
+   40 &   for(int i=ARGV.n-1;i>=0;--i)        
+   41 &        if(ARGV[i]==after) { ret=++i; break;}
+   42 &   if(ARGV.n<ret) ret=-1;
+   43 &   return ret;
+   44 & }
+   45 & 
+   46 & func int getARGV(int n,int default)
+   47 & {
+   48 &    int d=default;
+   49 &    int k=usedARGV(n);
+   50 &    if(k>0) d=strtol(ARGV[k]);
+   51 &     return d;
+   52 & }
+   53 & func real getARGV(int n,real default)
+   54 & {
+   55 &    real d=default;
+   56 &    int k=usedARGV(n);
+   57 &    if(k>0) d=strtod(ARGV[k]);
+   58 &    return d;
+   59 & }
+   60 & func string getARGV(int n,string default)
+   61 & {
+   62 &    string d=default;
+   63 &    int k=usedARGV(n);
+   64 &    if(k>0) d=ARGV[k];
+   65 &     return d;
+   66 & }
+   67 & 
+   68 & func int getARGV(string after,int default)
+   69 & {
+   70 &    int d=default;
+   71 &    int k=usedARGV(after);
+   72 &    if(k>0) d=strtol(ARGV[k]);
+   73 &     return d;
+   74 & }
+   75 & func real getARGV(string after,real default)
+   76 & {
+   77 &    real d=default;
+   78 &    int k=usedARGV(after);
+   79 &    if(k>0) d=strtod(ARGV[k]);
+   80 &    return d;
+   81 & }
+   82 & func string getARGV(string after,string default)
+   83 & {
+   84 &    string d=default;
+   85 &    int k=usedARGV(after);
+   86 &    if(k>0) d=ARGV[k];
+   87 &     return d;
+   88 & }
+   89 & 
+   90 & /*
+   91 & cout << getARGV(1,100) << endl;
+   92 & cout << getARGV(2,200.) << endl;
+   93 & cout << getARGV(3,"300.000") << endl;
+   94 & cout << getARGV("-n"," xxx") << endl;
+   95 & */
+   96 & ENDIFMACRO
+    8 :  macro getARGVidp 1 1 //
+    9 :  
+   10 :  
+   11 :  func int usedARGV(int n)
+   12 : {
+   13 :   int k=1,ii=1,kk=1,ret=-1;
+   14 :   for(int i=1;i<ARGV.n;++i)
+   15 :    {
+   16 :    // cout <<i<< " "<< ARGV[i] << " " <<(ARGV[i]=="-v") << " " << kk << "==" 
+   17 :    //      << n << " " << ARGV[i].rfind("dp") << " " <<ARGV[i].length-2  << endl;
+   18 :         
+   19 :        if(ARGV[i]=="-v") i++;
+   20 :        else if(ARGV[i]=="-fglut") i++;
+   21 :        else if(ARGV[i]=="-ffg") i++;
+   22 :        else if(ARGV[i]=="-glut") i++;
+   23 :        else if(ARGV[i]=="-f") i++;
+   24 :        else if(ARGV[i]=="-nw") ii;
+   25 :        else if(ARGV[i]=="-wait") ii;
+   26 :        else if(ARGV[i]=="-ne") ii;
+   27 :        else if(ARGV[i]=="-cd") ii;
+   28 :        //else if(ARGV[i].rfind(".edp")==ARGV[i].length-4 ) ii;
+   29 :        else if(i==1) ii;
+   30 :        else if(kk++==n) {ret=i;}
+   31 :       // else cout << " +++ \n";
+   32 :      }
+   33 :    //  cout << ret << endl;
+   34 :     return ret;
+   35 : }
+   36 : 
+   37 : func int usedARGV(string after)
+   38 : {
+   39 :   int ret=-1;
+   40 :   for(int i=ARGV.n-1;i>=0;--i)        
+   41 :        if(ARGV[i]==after) { ret=++i; break;}
+   42 :   if(ARGV.n<ret) ret=-1;
+   43 :   return ret;
+   44 : }
+   45 : 
+   46 : func int getARGV(int n,int default)
+   47 : {
+   48 :    int d=default;
+   49 :    int k=usedARGV(n);
+   50 :    if(k>0) d=strtol(ARGV[k]);
+   51 :     return d;
+   52 : }
+   53 : func real getARGV(int n,real default)
+   54 : {
+   55 :    real d=default;
+   56 :    int k=usedARGV(n);
+   57 :    if(k>0) d=strtod(ARGV[k]);
+   58 :    return d;
+   59 : }
+   60 : func string getARGV(int n,string default)
+   61 : {
+   62 :    string d=default;
+   63 :    int k=usedARGV(n);
+   64 :    if(k>0) d=ARGV[k];
+   65 :     return d;
+   66 : }
+   67 : 
+   68 : func int getARGV(string after,int default)
+   69 : {
+   70 :    int d=default;
+   71 :    int k=usedARGV(after);
+   72 :    if(k>0) d=strtol(ARGV[k]);
+   73 :     return d;
+   74 : }
+   75 : func real getARGV(string after,real default)
+   76 : {
+   77 :    real d=default;
+   78 :    int k=usedARGV(after);
+   79 :    if(k>0) d=strtod(ARGV[k]);
+   80 :    return d;
+   81 : }
+   82 : func string getARGV(string after,string default)
+   83 : {
+   84 :    string d=default;
+   85 :    int k=usedARGV(after);
+   86 :    if(k>0) d=ARGV[k];
+   87 :     return d;
+   88 : }
+   89 : 
+   90 : /*
+   91 : cout << getARGV(1,100) << endl;
+   92 : cout << getARGV(2,200.) << endl;
+   93 : cout << getARGV(3,"300.000") << endl;
+   94 : cout << getARGV("-n"," xxx") << endl;
+   95 : */
+   96 : 
+    2 : 
+    3 : // Parameters
+    4 : //real theta = 4.*pi/3.;
+    5 : macro Grad(u) [dx(u), dy(u)]  )   [dx(u), dy(u)] //
+    6 : //
+    7 : func z = 0;
+ *** Warning  The identifier z hide a Global identifier  
+
+    8 : func beta = 500;
+    9 : func co = 0.5;
+   10 : //func uexact = (x^2+y^2)^(1/4) * sin(atan(y/x)/2);
+   11 : func uexact = -1*(1/4)*((x^2 + y^2)-1);
+   12 : int n = getARGV("-n", 1);
+   13 : // Mesh
+   14 : //real d = 0.00001; //width of U-shape
+   15 : //border L1(t=0, 1-d){x=-1; y=-d-t;}
+   16 : //border L2(t=0, 1-d){x=-1; y=1-t;}
+   17 : //border B(t=0, 2){x=-1+t; y=-1;}
+   18 : //border C1(t=0, 1){x=t-1; y=d;}
+   19 : //border C2(t=0, 2*d){x=0; y=d-t;}
+   20 : //border C3(t=0, 1){x=-t; y=-d;}
+   21 : //border R(t=0, 2){x=1; y=-1+t;}
+   22 : //border T(t=0, 2){x=1-t; y=1;}
+   23 : //int n = 100;
+   24 : //mesh Th = buildmesh(L1(n/2) + L2(n/2) + B(n) + C1(n) + C2(3) + C3(n) + R(n) + T(n));
+   25 : 
+   26 : //for (int i = 0; i < ARGV.n; i++)
+   27 : //    cout << ARGV[i] << endl;
+   28 : //int n=ARGV[0];
+   29 : 
+   30 : //string d = getARGV("-d");
+   31 : string PREFIX = "n_"+n+"_results/";
+   32 : mesh Th = square(n,n);
+   33 : 
+   34 : // Fespace
+   35 : fespace Vh(Th, P2); //P2 conforming triangular FEM
+   36 : Vh phi, w, f=1;
+   37 : 
+   38 : // Solve
+   39 : //check the grad in the weak form
+   40 : solve Laplace(phi, w)
+   41 :     =  int2d(Th)(
+   42 :           //dx(phi)*dx(w)
+   43 :         //+ dy(phi)*dy(w)
+   44 :         Grad(phi)    [dx(phi), dy(phi)] ' * Grad(w)    [dx(w), dy(w)] 
+   45 :     )
+   46 :     - int2d(Th)(
+   47 :           f*w
+   48 :     )
+   49 :     //+ beta * int1d(Th)(phi*phi)
+   50 :      + on(1,2,3,4, phi=z)
+   51 : //    + on(L1,L2,B,C1,C2,C3,R,T, phi=z)
+   52 :     ;
+   53 : 
+   54 : // Plot
+   55 : //plot(phi, wait=true, ps="solution.eps"); //Plot phi
+   56 : //plot(Th, wait = true,  ps="mesh.eps" );
+   57 : 
+   58 : //Vh err = phi-(xˆ2+yˆ2-1)/4;
+   59 : //plot(err,value=true,wait=true);
+   60 : 
+   61 : //cout<<"L2 Error" << sqrt( int2d(Th)((phi-(xˆ2+yˆ2-1)/4)ˆ2) ) << endl;
+   62 : cout <<"L2 Error: " << sqrt(int2d(Th)((phi - uexact)^2));
+   63 : string path = PREFIX + "Th.msh";
+   64 : // Save mesh
+   65 : //savemesh(Th,path);// Parameters
+   66 : 
+   67 : 
+   68 : 
+   69 : //to build a gnuplot data file
+   70 : {
+   71 :     ofstream ff(PREFIX+"data.csv");
+   72 :     for (int i = 0; i < Th.nt; i++)
+   73 :     {
+   74 :         for (int j = 0; j < 3; j++)
+   75 :             ff << Th[i][j].x << ","<< Th[i][j].y << "," << phi[][Vh(i,j)] << endl;
+   76 : 
+   77 :         ff << Th[i][0].x << "," << Th[i][0].y << "," << phi[][Vh(i,0)] <<
+   78 :         "\n\n\n";
+   79 :     }
+   80 : }
+   81 :  sizestack + 1024 =2456  ( 1432 )
+
+  -- Square mesh : nb vertices  =256 ,  nb triangles = 450 ,  nb boundary edges 60
+  -- Solve : 
+          min -7.669e-50  max 0.0736708
+L2 Error: 0.041261times: compile 0.140725s, execution 0.547715s,  mpirank:0
+ CodeAlloc : nb ptr  3503,  size :428952 mpirank: 0
+Ok: Normal End
+-- FreeFem++ v  4.200001 (date Sun 30 Jun 2019 11:13:40 PM +0430 git no git)
+ Load: lg_fem lg_mesh lg_mesh3 eigenvalue 
+    1 : include "getARGV.idp" // for gestion of FreeFem++ argument and in version 3.10-1 FH
+    2 :  // F. Hecht 
+    3 :  // Usage:  getARGV(n,defaultvalue) // get the fist used default valeu
+    4 :  //  or     getARGV(after,defaultvalue) // get the arg after after 
+    5 :  // the type of delfaut value given the return type: int,double, string
+    6 :  // Modif version 3.54-2  Jan 2018 (add ones include)
+    7 :  IFMACRO(!getARGVidp)
+    8 &  macro getARGVidp 1 //
+    9 &  
+   10 &  
+   11 &  func int usedARGV(int n)
+   12 & {
+   13 &   int k=1,ii=1,kk=1,ret=-1;
+   14 &   for(int i=1;i<ARGV.n;++i)
+   15 &    {
+   16 &    // cout <<i<< " "<< ARGV[i] << " " <<(ARGV[i]=="-v") << " " << kk << "==" 
+   17 &    //      << n << " " << ARGV[i].rfind("dp") << " " <<ARGV[i].length-2  << endl;
+   18 &         
+   19 &        if(ARGV[i]=="-v") i++;
+   20 &        else if(ARGV[i]=="-fglut") i++;
+   21 &        else if(ARGV[i]=="-ffg") i++;
+   22 &        else if(ARGV[i]=="-glut") i++;
+   23 &        else if(ARGV[i]=="-f") i++;
+   24 &        else if(ARGV[i]=="-nw") ii;
+   25 &        else if(ARGV[i]=="-wait") ii;
+   26 &        else if(ARGV[i]=="-ne") ii;
+   27 &        else if(ARGV[i]=="-cd") ii;
+   28 &        //else if(ARGV[i].rfind(".edp")==ARGV[i].length-4 ) ii;
+   29 &        else if(i==1) ii;
+   30 &        else if(kk++==n) {ret=i;}
+   31 &       // else cout << " +++ \n";
+   32 &      }
+   33 &    //  cout << ret << endl;
+   34 &     return ret;
+   35 & }
+   36 & 
+   37 & func int usedARGV(string after)
+   38 & {
+   39 &   int ret=-1;
+   40 &   for(int i=ARGV.n-1;i>=0;--i)        
+   41 &        if(ARGV[i]==after) { ret=++i; break;}
+   42 &   if(ARGV.n<ret) ret=-1;
+   43 &   return ret;
+   44 & }
+   45 & 
+   46 & func int getARGV(int n,int default)
+   47 & {
+   48 &    int d=default;
+   49 &    int k=usedARGV(n);
+   50 &    if(k>0) d=strtol(ARGV[k]);
+   51 &     return d;
+   52 & }
+   53 & func real getARGV(int n,real default)
+   54 & {
+   55 &    real d=default;
+   56 &    int k=usedARGV(n);
+   57 &    if(k>0) d=strtod(ARGV[k]);
+   58 &    return d;
+   59 & }
+   60 & func string getARGV(int n,string default)
+   61 & {
+   62 &    string d=default;
+   63 &    int k=usedARGV(n);
+   64 &    if(k>0) d=ARGV[k];
+   65 &     return d;
+   66 & }
+   67 & 
+   68 & func int getARGV(string after,int default)
+   69 & {
+   70 &    int d=default;
+   71 &    int k=usedARGV(after);
+   72 &    if(k>0) d=strtol(ARGV[k]);
+   73 &     return d;
+   74 & }
+   75 & func real getARGV(string after,real default)
+   76 & {
+   77 &    real d=default;
+   78 &    int k=usedARGV(after);
+   79 &    if(k>0) d=strtod(ARGV[k]);
+   80 &    return d;
+   81 & }
+   82 & func string getARGV(string after,string default)
+   83 & {
+   84 &    string d=default;
+   85 &    int k=usedARGV(after);
+   86 &    if(k>0) d=ARGV[k];
+   87 &     return d;
+   88 & }
+   89 & 
+   90 & /*
+   91 & cout << getARGV(1,100) << endl;
+   92 & cout << getARGV(2,200.) << endl;
+   93 & cout << getARGV(3,"300.000") << endl;
+   94 & cout << getARGV("-n"," xxx") << endl;
+   95 & */
+   96 & ENDIFMACRO
+    8 :  macro getARGVidp 1 1 //
+    9 :  
+   10 :  
+   11 :  func int usedARGV(int n)
+   12 : {
+   13 :   int k=1,ii=1,kk=1,ret=-1;
+   14 :   for(int i=1;i<ARGV.n;++i)
+   15 :    {
+   16 :    // cout <<i<< " "<< ARGV[i] << " " <<(ARGV[i]=="-v") << " " << kk << "==" 
+   17 :    //      << n << " " << ARGV[i].rfind("dp") << " " <<ARGV[i].length-2  << endl;
+   18 :         
+   19 :        if(ARGV[i]=="-v") i++;
+   20 :        else if(ARGV[i]=="-fglut") i++;
+   21 :        else if(ARGV[i]=="-ffg") i++;
+   22 :        else if(ARGV[i]=="-glut") i++;
+   23 :        else if(ARGV[i]=="-f") i++;
+   24 :        else if(ARGV[i]=="-nw") ii;
+   25 :        else if(ARGV[i]=="-wait") ii;
+   26 :        else if(ARGV[i]=="-ne") ii;
+   27 :        else if(ARGV[i]=="-cd") ii;
+   28 :        //else if(ARGV[i].rfind(".edp")==ARGV[i].length-4 ) ii;
+   29 :        else if(i==1) ii;
+   30 :        else if(kk++==n) {ret=i;}
+   31 :       // else cout << " +++ \n";
+   32 :      }
+   33 :    //  cout << ret << endl;
+   34 :     return ret;
+   35 : }
+   36 : 
+   37 : func int usedARGV(string after)
+   38 : {
+   39 :   int ret=-1;
+   40 :   for(int i=ARGV.n-1;i>=0;--i)        
+   41 :        if(ARGV[i]==after) { ret=++i; break;}
+   42 :   if(ARGV.n<ret) ret=-1;
+   43 :   return ret;
+   44 : }
+   45 : 
+   46 : func int getARGV(int n,int default)
+   47 : {
+   48 :    int d=default;
+   49 :    int k=usedARGV(n);
+   50 :    if(k>0) d=strtol(ARGV[k]);
+   51 :     return d;
+   52 : }
+   53 : func real getARGV(int n,real default)
+   54 : {
+   55 :    real d=default;
+   56 :    int k=usedARGV(n);
+   57 :    if(k>0) d=strtod(ARGV[k]);
+   58 :    return d;
+   59 : }
+   60 : func string getARGV(int n,string default)
+   61 : {
+   62 :    string d=default;
+   63 :    int k=usedARGV(n);
+   64 :    if(k>0) d=ARGV[k];
+   65 :     return d;
+   66 : }
+   67 : 
+   68 : func int getARGV(string after,int default)
+   69 : {
+   70 :    int d=default;
+   71 :    int k=usedARGV(after);
+   72 :    if(k>0) d=strtol(ARGV[k]);
+   73 :     return d;
+   74 : }
+   75 : func real getARGV(string after,real default)
+   76 : {
+   77 :    real d=default;
+   78 :    int k=usedARGV(after);
+   79 :    if(k>0) d=strtod(ARGV[k]);
+   80 :    return d;
+   81 : }
+   82 : func string getARGV(string after,string default)
+   83 : {
+   84 :    string d=default;
+   85 :    int k=usedARGV(after);
+   86 :    if(k>0) d=ARGV[k];
+   87 :     return d;
+   88 : }
+   89 : 
+   90 : /*
+   91 : cout << getARGV(1,100) << endl;
+   92 : cout << getARGV(2,200.) << endl;
+   93 : cout << getARGV(3,"300.000") << endl;
+   94 : cout << getARGV("-n"," xxx") << endl;
+   95 : */
+   96 : 
+    2 : 
+    3 : // Parameters
+    4 : //real theta = 4.*pi/3.;
+    5 : macro Grad(u) [dx(u), dy(u)]  )   [dx(u), dy(u)] //
+    6 : //
+    7 : func z = 0;
+ *** Warning  The identifier z hide a Global identifier  
+
+    8 : func beta = 500;
+    9 : func co = 0.5;
+   10 : //func uexact = (x^2+y^2)^(1/4) * sin(atan(y/x)/2);
+   11 : func uexact = -1*(1/4)*((x^2 + y^2)-1);
+   12 : int n = getARGV("-n", 1);
+   13 : // Mesh
+   14 : //real d = 0.00001; //width of U-shape
+   15 : //border L1(t=0, 1-d){x=-1; y=-d-t;}
+   16 : //border L2(t=0, 1-d){x=-1; y=1-t;}
+   17 : //border B(t=0, 2){x=-1+t; y=-1;}
+   18 : //border C1(t=0, 1){x=t-1; y=d;}
+   19 : //border C2(t=0, 2*d){x=0; y=d-t;}
+   20 : //border C3(t=0, 1){x=-t; y=-d;}
+   21 : //border R(t=0, 2){x=1; y=-1+t;}
+   22 : //border T(t=0, 2){x=1-t; y=1;}
+   23 : //int n = 100;
+   24 : //mesh Th = buildmesh(L1(n/2) + L2(n/2) + B(n) + C1(n) + C2(3) + C3(n) + R(n) + T(n));
+   25 : 
+   26 : //for (int i = 0; i < ARGV.n; i++)
+   27 : //    cout << ARGV[i] << endl;
+   28 : //int n=ARGV[0];
+   29 : 
+   30 : //string d = getARGV("-d");
+   31 : string PREFIX = "n_"+n+"_results/";
+   32 : mesh Th = square(n,n);
+   33 : 
+   34 : // Fespace
+   35 : fespace Vh(Th, P2); //P2 conforming triangular FEM
+   36 : Vh phi, w, f=1;
+   37 : 
+   38 : // Solve
+   39 : //check the grad in the weak form
+   40 : solve Laplace(phi, w)
+   41 :     =  int2d(Th)(
+   42 :           //dx(phi)*dx(w)
+   43 :         //+ dy(phi)*dy(w)
+   44 :         Grad(phi)    [dx(phi), dy(phi)] ' * Grad(w)    [dx(w), dy(w)] 
+   45 :     )
+   46 :     - int2d(Th)(
+   47 :           f*w
+   48 :     )
+   49 :     //+ beta * int1d(Th)(phi*phi)
+   50 :      + on(1,2,3,4, phi=z)
+   51 : //    + on(L1,L2,B,C1,C2,C3,R,T, phi=z)
+   52 :     ;
+   53 : 
+   54 : // Plot
+   55 : //plot(phi, wait=true, ps="solution.eps"); //Plot phi
+   56 : //plot(Th, wait = true,  ps="mesh.eps" );
+   57 : 
+   58 : //Vh err = phi-(xˆ2+yˆ2-1)/4;
+   59 : //plot(err,value=true,wait=true);
+   60 : 
+   61 : //cout<<"L2 Error" << sqrt( int2d(Th)((phi-(xˆ2+yˆ2-1)/4)ˆ2) ) << endl;
+   62 : cout <<"L2 Error: " << sqrt(int2d(Th)((phi - uexact)^2));
+   63 : string path = PREFIX + "Th.msh";
+   64 : // Save mesh
+   65 : //savemesh(Th,path);// Parameters
+   66 : 
+   67 : 
+   68 : 
+   69 : //to build a gnuplot data file
+   70 : {
+   71 :     ofstream ff(PREFIX+"data.csv");
+   72 :     for (int i = 0; i < Th.nt; i++)
+   73 :     {
+   74 :         for (int j = 0; j < 3; j++)
+   75 :             ff << Th[i][j].x << ","<< Th[i][j].y << "," << phi[][Vh(i,j)] << endl;
+   76 : 
+   77 :         ff << Th[i][0].x << "," << Th[i][0].y << "," << phi[][Vh(i,0)] <<
+   78 :         "\n\n\n";
+   79 :     }
+   80 : }
+   81 :  sizestack + 1024 =2456  ( 1432 )
+
+  -- Square mesh : nb vertices  =36 ,  nb triangles = 50 ,  nb boundary edges 20
+  -- Solve : 
+          min -8.94996e-50  max 0.0736294
+L2 Error: 0.0412217times: compile 0.018053s, execution 0.011366s,  mpirank:0
+ CodeAlloc : nb ptr  3503,  size :428952 mpirank: 0
+Ok: Normal End
+-- FreeFem++ v  4.200001 (date Sun 30 Jun 2019 11:13:40 PM +0430 git no git)
+ Load: lg_fem lg_mesh lg_mesh3 eigenvalue 
+    1 : include "getARGV.idp" // for gestion of FreeFem++ argument and in version 3.10-1 FH
+    2 :  // F. Hecht 
+    3 :  // Usage:  getARGV(n,defaultvalue) // get the fist used default valeu
+    4 :  //  or     getARGV(after,defaultvalue) // get the arg after after 
+    5 :  // the type of delfaut value given the return type: int,double, string
+    6 :  // Modif version 3.54-2  Jan 2018 (add ones include)
+    7 :  IFMACRO(!getARGVidp)
+    8 &  macro getARGVidp 1 //
+    9 &  
+   10 &  
+   11 &  func int usedARGV(int n)
+   12 & {
+   13 &   int k=1,ii=1,kk=1,ret=-1;
+   14 &   for(int i=1;i<ARGV.n;++i)
+   15 &    {
+   16 &    // cout <<i<< " "<< ARGV[i] << " " <<(ARGV[i]=="-v") << " " << kk << "==" 
+   17 &    //      << n << " " << ARGV[i].rfind("dp") << " " <<ARGV[i].length-2  << endl;
+   18 &         
+   19 &        if(ARGV[i]=="-v") i++;
+   20 &        else if(ARGV[i]=="-fglut") i++;
+   21 &        else if(ARGV[i]=="-ffg") i++;
+   22 &        else if(ARGV[i]=="-glut") i++;
+   23 &        else if(ARGV[i]=="-f") i++;
+   24 &        else if(ARGV[i]=="-nw") ii;
+   25 &        else if(ARGV[i]=="-wait") ii;
+   26 &        else if(ARGV[i]=="-ne") ii;
+   27 &        else if(ARGV[i]=="-cd") ii;
+   28 &        //else if(ARGV[i].rfind(".edp")==ARGV[i].length-4 ) ii;
+   29 &        else if(i==1) ii;
+   30 &        else if(kk++==n) {ret=i;}
+   31 &       // else cout << " +++ \n";
+   32 &      }
+   33 &    //  cout << ret << endl;
+   34 &     return ret;
+   35 & }
+   36 & 
+   37 & func int usedARGV(string after)
+   38 & {
+   39 &   int ret=-1;
+   40 &   for(int i=ARGV.n-1;i>=0;--i)        
+   41 &        if(ARGV[i]==after) { ret=++i; break;}
+   42 &   if(ARGV.n<ret) ret=-1;
+   43 &   return ret;
+   44 & }
+   45 & 
+   46 & func int getARGV(int n,int default)
+   47 & {
+   48 &    int d=default;
+   49 &    int k=usedARGV(n);
+   50 &    if(k>0) d=strtol(ARGV[k]);
+   51 &     return d;
+   52 & }
+   53 & func real getARGV(int n,real default)
+   54 & {
+   55 &    real d=default;
+   56 &    int k=usedARGV(n);
+   57 &    if(k>0) d=strtod(ARGV[k]);
+   58 &    return d;
+   59 & }
+   60 & func string getARGV(int n,string default)
+   61 & {
+   62 &    string d=default;
+   63 &    int k=usedARGV(n);
+   64 &    if(k>0) d=ARGV[k];
+   65 &     return d;
+   66 & }
+   67 & 
+   68 & func int getARGV(string after,int default)
+   69 & {
+   70 &    int d=default;
+   71 &    int k=usedARGV(after);
+   72 &    if(k>0) d=strtol(ARGV[k]);
+   73 &     return d;
+   74 & }
+   75 & func real getARGV(string after,real default)
+   76 & {
+   77 &    real d=default;
+   78 &    int k=usedARGV(after);
+   79 &    if(k>0) d=strtod(ARGV[k]);
+   80 &    return d;
+   81 & }
+   82 & func string getARGV(string after,string default)
+   83 & {
+   84 &    string d=default;
+   85 &    int k=usedARGV(after);
+   86 &    if(k>0) d=ARGV[k];
+   87 &     return d;
+   88 & }
+   89 & 
+   90 & /*
+   91 & cout << getARGV(1,100) << endl;
+   92 & cout << getARGV(2,200.) << endl;
+   93 & cout << getARGV(3,"300.000") << endl;
+   94 & cout << getARGV("-n"," xxx") << endl;
+   95 & */
+   96 & ENDIFMACRO
+    8 :  macro getARGVidp 1 1 //
+    9 :  
+   10 :  
+   11 :  func int usedARGV(int n)
+   12 : {
+   13 :   int k=1,ii=1,kk=1,ret=-1;
+   14 :   for(int i=1;i<ARGV.n;++i)
+   15 :    {
+   16 :    // cout <<i<< " "<< ARGV[i] << " " <<(ARGV[i]=="-v") << " " << kk << "==" 
+   17 :    //      << n << " " << ARGV[i].rfind("dp") << " " <<ARGV[i].length-2  << endl;
+   18 :         
+   19 :        if(ARGV[i]=="-v") i++;
+   20 :        else if(ARGV[i]=="-fglut") i++;
+   21 :        else if(ARGV[i]=="-ffg") i++;
+   22 :        else if(ARGV[i]=="-glut") i++;
+   23 :        else if(ARGV[i]=="-f") i++;
+   24 :        else if(ARGV[i]=="-nw") ii;
+   25 :        else if(ARGV[i]=="-wait") ii;
+   26 :        else if(ARGV[i]=="-ne") ii;
+   27 :        else if(ARGV[i]=="-cd") ii;
+   28 :        //else if(ARGV[i].rfind(".edp")==ARGV[i].length-4 ) ii;
+   29 :        else if(i==1) ii;
+   30 :        else if(kk++==n) {ret=i;}
+   31 :       // else cout << " +++ \n";
+   32 :      }
+   33 :    //  cout << ret << endl;
+   34 :     return ret;
+   35 : }
+   36 : 
+   37 : func int usedARGV(string after)
+   38 : {
+   39 :   int ret=-1;
+   40 :   for(int i=ARGV.n-1;i>=0;--i)        
+   41 :        if(ARGV[i]==after) { ret=++i; break;}
+   42 :   if(ARGV.n<ret) ret=-1;
+   43 :   return ret;
+   44 : }
+   45 : 
+   46 : func int getARGV(int n,int default)
+   47 : {
+   48 :    int d=default;
+   49 :    int k=usedARGV(n);
+   50 :    if(k>0) d=strtol(ARGV[k]);
+   51 :     return d;
+   52 : }
+   53 : func real getARGV(int n,real default)
+   54 : {
+   55 :    real d=default;
+   56 :    int k=usedARGV(n);
+   57 :    if(k>0) d=strtod(ARGV[k]);
+   58 :    return d;
+   59 : }
+   60 : func string getARGV(int n,string default)
+   61 : {
+   62 :    string d=default;
+   63 :    int k=usedARGV(n);
+   64 :    if(k>0) d=ARGV[k];
+   65 :     return d;
+   66 : }
+   67 : 
+   68 : func int getARGV(string after,int default)
+   69 : {
+   70 :    int d=default;
+   71 :    int k=usedARGV(after);
+   72 :    if(k>0) d=strtol(ARGV[k]);
+   73 :     return d;
+   74 : }
+   75 : func real getARGV(string after,real default)
+   76 : {
+   77 :    real d=default;
+   78 :    int k=usedARGV(after);
+   79 :    if(k>0) d=strtod(ARGV[k]);
+   80 :    return d;
+   81 : }
+   82 : func string getARGV(string after,string default)
+   83 : {
+   84 :    string d=default;
+   85 :    int k=usedARGV(after);
+   86 :    if(k>0) d=ARGV[k];
+   87 :     return d;
+   88 : }
+   89 : 
+   90 : /*
+   91 : cout << getARGV(1,100) << endl;
+   92 : cout << getARGV(2,200.) << endl;
+   93 : cout << getARGV(3,"300.000") << endl;
+   94 : cout << getARGV("-n"," xxx") << endl;
+   95 : */
+   96 : 
+    2 : 
+    3 : // Parameters
+    4 : //real theta = 4.*pi/3.;
+    5 : macro Grad(u) [dx(u), dy(u)]  )   [dx(u), dy(u)] //
+    6 : //
+    7 : func z = 0;
+ *** Warning  The identifier z hide a Global identifier  
+
+    8 : func beta = 500;
+    9 : func co = 0.5;
+   10 : //func uexact = (x^2+y^2)^(1/4) * sin(atan(y/x)/2);
+   11 : func uexact = -1*(1/4)*((x^2 + y^2)-1);
+   12 : int n = getARGV("-n", 1);
+   13 : // Mesh
+   14 : //real d = 0.00001; //width of U-shape
+   15 : //border L1(t=0, 1-d){x=-1; y=-d-t;}
+   16 : //border L2(t=0, 1-d){x=-1; y=1-t;}
+   17 : //border B(t=0, 2){x=-1+t; y=-1;}
+   18 : //border C1(t=0, 1){x=t-1; y=d;}
+   19 : //border C2(t=0, 2*d){x=0; y=d-t;}
+   20 : //border C3(t=0, 1){x=-t; y=-d;}
+   21 : //border R(t=0, 2){x=1; y=-1+t;}
+   22 : //border T(t=0, 2){x=1-t; y=1;}
+   23 : //int n = 100;
+   24 : //mesh Th = buildmesh(L1(n/2) + L2(n/2) + B(n) + C1(n) + C2(3) + C3(n) + R(n) + T(n));
+   25 : 
+   26 : //for (int i = 0; i < ARGV.n; i++)
+   27 : //    cout << ARGV[i] << endl;
+   28 : //int n=ARGV[0];
+   29 : 
+   30 : //string d = getARGV("-d");
+   31 : string PREFIX = "n_"+n+"_results/";
+   32 : mesh Th = square(n,n);
+   33 : 
+   34 : // Fespace
+   35 : fespace Vh(Th, P2); //P2 conforming triangular FEM
+   36 : Vh phi, w, f=1;
+   37 : 
+   38 : // Solve
+   39 : //check the grad in the weak form
+   40 : solve Laplace(phi, w)
+   41 :     =  int2d(Th)(
+   42 :           //dx(phi)*dx(w)
+   43 :         //+ dy(phi)*dy(w)
+   44 :         Grad(phi)    [dx(phi), dy(phi)] ' * Grad(w)    [dx(w), dy(w)] 
+   45 :     )
+   46 :     - int2d(Th)(
+   47 :           f*w
+   48 :     )
+   49 :     //+ beta * int1d(Th)(phi*phi)
+   50 :      + on(1,2,3,4, phi=z)
+   51 : //    + on(L1,L2,B,C1,C2,C3,R,T, phi=z)
+   52 :     ;
+   53 : 
+   54 : // Plot
+   55 : //plot(phi, wait=true, ps="solution.eps"); //Plot phi
+   56 : //plot(Th, wait = true,  ps="mesh.eps" );
+   57 : 
+   58 : //Vh err = phi-(xˆ2+yˆ2-1)/4;
+   59 : //plot(err,value=true,wait=true);
+   60 : 
+   61 : //cout<<"L2 Error" << sqrt( int2d(Th)((phi-(xˆ2+yˆ2-1)/4)ˆ2) ) << endl;
+   62 : cout <<"L2 Error: " << sqrt(int2d(Th)((phi - uexact)^2));
+   63 : string path = PREFIX + "Th.msh";
+   64 : // Save mesh
+   65 : //savemesh(Th,path);// Parameters
+   66 : 
+   67 : 
+   68 : 
+   69 : //to build a gnuplot data file
+   70 : {
+   71 :     ofstream ff(PREFIX+"data.csv");
+   72 :     for (int i = 0; i < Th.nt; i++)
+   73 :     {
+   74 :         for (int j = 0; j < 3; j++)
+   75 :             ff << Th[i][j].x << ","<< Th[i][j].y << "," << phi[][Vh(i,j)] << endl;
+   76 : 
+   77 :         ff << Th[i][0].x << "," << Th[i][0].y << "," << phi[][Vh(i,0)] <<
+   78 :         "\n\n\n";
+   79 :     }
+   80 : }
+   81 :  sizestack + 1024 =2456  ( 1432 )
+
+  -- Square mesh : nb vertices  =36 ,  nb triangles = 50 ,  nb boundary edges 20
+  -- Solve : 
+          min -8.94996e-50  max 0.0736294
+L2 Error: 0.0412217times: compile 0.110325s, execution 0.049751s,  mpirank:0
+ CodeAlloc : nb ptr  3503,  size :428952 mpirank: 0
+Ok: Normal End
+-- FreeFem++ v  4.200001 (date Sun 30 Jun 2019 11:13:40 PM +0430 git no git)
+ Load: lg_fem lg_mesh lg_mesh3 eigenvalue 
+    1 : include "getARGV.idp" // for gestion of FreeFem++ argument and in version 3.10-1 FH
+    2 :  // F. Hecht 
+    3 :  // Usage:  getARGV(n,defaultvalue) // get the fist used default valeu
+    4 :  //  or     getARGV(after,defaultvalue) // get the arg after after 
+    5 :  // the type of delfaut value given the return type: int,double, string
+    6 :  // Modif version 3.54-2  Jan 2018 (add ones include)
+    7 :  IFMACRO(!getARGVidp)
+    8 &  macro getARGVidp 1 //
+    9 &  
+   10 &  
+   11 &  func int usedARGV(int n)
+   12 & {
+   13 &   int k=1,ii=1,kk=1,ret=-1;
+   14 &   for(int i=1;i<ARGV.n;++i)
+   15 &    {
+   16 &    // cout <<i<< " "<< ARGV[i] << " " <<(ARGV[i]=="-v") << " " << kk << "==" 
+   17 &    //      << n << " " << ARGV[i].rfind("dp") << " " <<ARGV[i].length-2  << endl;
+   18 &         
+   19 &        if(ARGV[i]=="-v") i++;
+   20 &        else if(ARGV[i]=="-fglut") i++;
+   21 &        else if(ARGV[i]=="-ffg") i++;
+   22 &        else if(ARGV[i]=="-glut") i++;
+   23 &        else if(ARGV[i]=="-f") i++;
+   24 &        else if(ARGV[i]=="-nw") ii;
+   25 &        else if(ARGV[i]=="-wait") ii;
+   26 &        else if(ARGV[i]=="-ne") ii;
+   27 &        else if(ARGV[i]=="-cd") ii;
+   28 &        //else if(ARGV[i].rfind(".edp")==ARGV[i].length-4 ) ii;
+   29 &        else if(i==1) ii;
+   30 &        else if(kk++==n) {ret=i;}
+   31 &       // else cout << " +++ \n";
+   32 &      }
+   33 &    //  cout << ret << endl;
+   34 &     return ret;
+   35 & }
+   36 & 
+   37 & func int usedARGV(string after)
+   38 & {
+   39 &   int ret=-1;
+   40 &   for(int i=ARGV.n-1;i>=0;--i)        
+   41 &        if(ARGV[i]==after) { ret=++i; break;}
+   42 &   if(ARGV.n<ret) ret=-1;
+   43 &   return ret;
+   44 & }
+   45 & 
+   46 & func int getARGV(int n,int default)
+   47 & {
+   48 &    int d=default;
+   49 &    int k=usedARGV(n);
+   50 &    if(k>0) d=strtol(ARGV[k]);
+   51 &     return d;
+   52 & }
+   53 & func real getARGV(int n,real default)
+   54 & {
+   55 &    real d=default;
+   56 &    int k=usedARGV(n);
+   57 &    if(k>0) d=strtod(ARGV[k]);
+   58 &    return d;
+   59 & }
+   60 & func string getARGV(int n,string default)
+   61 & {
+   62 &    string d=default;
+   63 &    int k=usedARGV(n);
+   64 &    if(k>0) d=ARGV[k];
+   65 &     return d;
+   66 & }
+   67 & 
+   68 & func int getARGV(string after,int default)
+   69 & {
+   70 &    int d=default;
+   71 &    int k=usedARGV(after);
+   72 &    if(k>0) d=strtol(ARGV[k]);
+   73 &     return d;
+   74 & }
+   75 & func real getARGV(string after,real default)
+   76 & {
+   77 &    real d=default;
+   78 &    int k=usedARGV(after);
+   79 &    if(k>0) d=strtod(ARGV[k]);
+   80 &    return d;
+   81 & }
+   82 & func string getARGV(string after,string default)
+   83 & {
+   84 &    string d=default;
+   85 &    int k=usedARGV(after);
+   86 &    if(k>0) d=ARGV[k];
+   87 &     return d;
+   88 & }
+   89 & 
+   90 & /*
+   91 & cout << getARGV(1,100) << endl;
+   92 & cout << getARGV(2,200.) << endl;
+   93 & cout << getARGV(3,"300.000") << endl;
+   94 & cout << getARGV("-n"," xxx") << endl;
+   95 & */
+   96 & ENDIFMACRO
+    8 :  macro getARGVidp 1 1 //
+    9 :  
+   10 :  
+   11 :  func int usedARGV(int n)
+   12 : {
+   13 :   int k=1,ii=1,kk=1,ret=-1;
+   14 :   for(int i=1;i<ARGV.n;++i)
+   15 :    {
+   16 :    // cout <<i<< " "<< ARGV[i] << " " <<(ARGV[i]=="-v") << " " << kk << "==" 
+   17 :    //      << n << " " << ARGV[i].rfind("dp") << " " <<ARGV[i].length-2  << endl;
+   18 :         
+   19 :        if(ARGV[i]=="-v") i++;
+   20 :        else if(ARGV[i]=="-fglut") i++;
+   21 :        else if(ARGV[i]=="-ffg") i++;
+   22 :        else if(ARGV[i]=="-glut") i++;
+   23 :        else if(ARGV[i]=="-f") i++;
+   24 :        else if(ARGV[i]=="-nw") ii;
+   25 :        else if(ARGV[i]=="-wait") ii;
+   26 :        else if(ARGV[i]=="-ne") ii;
+   27 :        else if(ARGV[i]=="-cd") ii;
+   28 :        //else if(ARGV[i].rfind(".edp")==ARGV[i].length-4 ) ii;
+   29 :        else if(i==1) ii;
+   30 :        else if(kk++==n) {ret=i;}
+   31 :       // else cout << " +++ \n";
+   32 :      }
+   33 :    //  cout << ret << endl;
+   34 :     return ret;
+   35 : }
+   36 : 
+   37 : func int usedARGV(string after)
+   38 : {
+   39 :   int ret=-1;
+   40 :   for(int i=ARGV.n-1;i>=0;--i)        
+   41 :        if(ARGV[i]==after) { ret=++i; break;}
+   42 :   if(ARGV.n<ret) ret=-1;
+   43 :   return ret;
+   44 : }
+   45 : 
+   46 : func int getARGV(int n,int default)
+   47 : {
+   48 :    int d=default;
+   49 :    int k=usedARGV(n);
+   50 :    if(k>0) d=strtol(ARGV[k]);
+   51 :     return d;
+   52 : }
+   53 : func real getARGV(int n,real default)
+   54 : {
+   55 :    real d=default;
+   56 :    int k=usedARGV(n);
+   57 :    if(k>0) d=strtod(ARGV[k]);
+   58 :    return d;
+   59 : }
+   60 : func string getARGV(int n,string default)
+   61 : {
+   62 :    string d=default;
+   63 :    int k=usedARGV(n);
+   64 :    if(k>0) d=ARGV[k];
+   65 :     return d;
+   66 : }
+   67 : 
+   68 : func int getARGV(string after,int default)
+   69 : {
+   70 :    int d=default;
+   71 :    int k=usedARGV(after);
+   72 :    if(k>0) d=strtol(ARGV[k]);
+   73 :     return d;
+   74 : }
+   75 : func real getARGV(string after,real default)
+   76 : {
+   77 :    real d=default;
+   78 :    int k=usedARGV(after);
+   79 :    if(k>0) d=strtod(ARGV[k]);
+   80 :    return d;
+   81 : }
+   82 : func string getARGV(string after,string default)
+   83 : {
+   84 :    string d=default;
+   85 :    int k=usedARGV(after);
+   86 :    if(k>0) d=ARGV[k];
+   87 :     return d;
+   88 : }
+   89 : 
+   90 : /*
+   91 : cout << getARGV(1,100) << endl;
+   92 : cout << getARGV(2,200.) << endl;
+   93 : cout << getARGV(3,"300.000") << endl;
+   94 : cout << getARGV("-n"," xxx") << endl;
+   95 : */
+   96 : 
+    2 : 
+    3 : // Parameters
+    4 : //real theta = 4.*pi/3.;
+    5 : macro Grad(u) [dx(u), dy(u)]  )   [dx(u), dy(u)] //
+    6 : //
+    7 : func z = 0;
+ *** Warning  The identifier z hide a Global identifier  
+
+    8 : func beta = 500;
+    9 : func co = 0.5;
+   10 : //func uexact = (x^2+y^2)^(1/4) * sin(atan(y/x)/2);
+   11 : func uexact = -1*(1/4)*((x^2 + y^2)-1);
+   12 : int n = getARGV("-n", 1);
+   13 : // Mesh
+   14 : //real d = 0.00001; //width of U-shape
+   15 : //border L1(t=0, 1-d){x=-1; y=-d-t;}
+   16 : //border L2(t=0, 1-d){x=-1; y=1-t;}
+   17 : //border B(t=0, 2){x=-1+t; y=-1;}
+   18 : //border C1(t=0, 1){x=t-1; y=d;}
+   19 : //border C2(t=0, 2*d){x=0; y=d-t;}
+   20 : //border C3(t=0, 1){x=-t; y=-d;}
+   21 : //border R(t=0, 2){x=1; y=-1+t;}
+   22 : //border T(t=0, 2){x=1-t; y=1;}
+   23 : //int n = 100;
+   24 : //mesh Th = buildmesh(L1(n/2) + L2(n/2) + B(n) + C1(n) + C2(3) + C3(n) + R(n) + T(n));
+   25 : 
+   26 : //for (int i = 0; i < ARGV.n; i++)
+   27 : //    cout << ARGV[i] << endl;
+   28 : //int n=ARGV[0];
+   29 : 
+   30 : //string d = getARGV("-d");
+   31 : string PREFIX = "n_"+n+"_results/";
+   32 : mesh Th = square(n,n);
+   33 : 
+   34 : // Fespace
+   35 : fespace Vh(Th, P2); //P2 conforming triangular FEM
+   36 : Vh phi, w, f=1;
+   37 : 
+   38 : // Solve
+   39 : //check the grad in the weak form
+   40 : solve Laplace(phi, w)
+   41 :     =  int2d(Th)(
+   42 :           //dx(phi)*dx(w)
+   43 :         //+ dy(phi)*dy(w)
+   44 :         Grad(phi)    [dx(phi), dy(phi)] ' * Grad(w)    [dx(w), dy(w)] 
+   45 :     )
+   46 :     - int2d(Th)(
+   47 :           f*w
+   48 :     )
+   49 :     //+ beta * int1d(Th)(phi*phi)
+   50 :      + on(1,2,3,4, phi=z)
+   51 : //    + on(L1,L2,B,C1,C2,C3,R,T, phi=z)
+   52 :     ;
+   53 : 
+   54 : // Plot
+   55 : //plot(phi, wait=true, ps="solution.eps"); //Plot phi
+   56 : //plot(Th, wait = true,  ps="mesh.eps" );
+   57 : 
+   58 : //Vh err = phi-(xˆ2+yˆ2-1)/4;
+   59 : //plot(err,value=true,wait=true);
+   60 : 
+   61 : //cout<<"L2 Error" << sqrt( int2d(Th)((phi-(xˆ2+yˆ2-1)/4)ˆ2) ) << endl;
+   62 : cout <<"L2 Error: " << sqrt(int2d(Th)((phi - uexact)^2));
+   63 : string path = PREFIX + "Th.msh";
+   64 : // Save mesh
+   65 : //savemesh(Th,path);// Parameters
+   66 : 
+   67 : 
+   68 : 
+   69 : //to build a gnuplot data file
+   70 : {
+   71 :     ofstream ff(PREFIX+"data.csv");
+   72 :     for (int i = 0; i < Th.nt; i++)
+   73 :     {
+   74 :         for (int j = 0; j < 3; j++)
+   75 :             ff << Th[i][j].x << ","<< Th[i][j].y << "," << phi[][Vh(i,j)] << endl;
+   76 : 
+   77 :         ff << Th[i][0].x << "," << Th[i][0].y << "," << phi[][Vh(i,0)] <<
+   78 :         "\n\n\n";
+   79 :     }
+   80 : }
+   81 :  sizestack + 1024 =2456  ( 1432 )
+
+  -- Square mesh : nb vertices  =36 ,  nb triangles = 50 ,  nb boundary edges 20
+  -- Solve : 
+          min -8.94996e-50  max 0.0736294
+L2 Error: 0.0412217times: compile 0.017033s, execution 0.00943s,  mpirank:0
+ CodeAlloc : nb ptr  3503,  size :428952 mpirank: 0
+Ok: Normal End
+-- FreeFem++ v  4.200001 (date Sun 30 Jun 2019 11:13:40 PM +0430 git no git)
+ Load: lg_fem lg_mesh lg_mesh3 eigenvalue 
+    1 : include "getARGV.idp" // for gestion of FreeFem++ argument and in version 3.10-1 FH
+    2 :  // F. Hecht 
+    3 :  // Usage:  getARGV(n,defaultvalue) // get the fist used default valeu
+    4 :  //  or     getARGV(after,defaultvalue) // get the arg after after 
+    5 :  // the type of delfaut value given the return type: int,double, string
+    6 :  // Modif version 3.54-2  Jan 2018 (add ones include)
+    7 :  IFMACRO(!getARGVidp)
+    8 &  macro getARGVidp 1 //
+    9 &  
+   10 &  
+   11 &  func int usedARGV(int n)
+   12 & {
+   13 &   int k=1,ii=1,kk=1,ret=-1;
+   14 &   for(int i=1;i<ARGV.n;++i)
+   15 &    {
+   16 &    // cout <<i<< " "<< ARGV[i] << " " <<(ARGV[i]=="-v") << " " << kk << "==" 
+   17 &    //      << n << " " << ARGV[i].rfind("dp") << " " <<ARGV[i].length-2  << endl;
+   18 &         
+   19 &        if(ARGV[i]=="-v") i++;
+   20 &        else if(ARGV[i]=="-fglut") i++;
+   21 &        else if(ARGV[i]=="-ffg") i++;
+   22 &        else if(ARGV[i]=="-glut") i++;
+   23 &        else if(ARGV[i]=="-f") i++;
+   24 &        else if(ARGV[i]=="-nw") ii;
+   25 &        else if(ARGV[i]=="-wait") ii;
+   26 &        else if(ARGV[i]=="-ne") ii;
+   27 &        else if(ARGV[i]=="-cd") ii;
+   28 &        //else if(ARGV[i].rfind(".edp")==ARGV[i].length-4 ) ii;
+   29 &        else if(i==1) ii;
+   30 &        else if(kk++==n) {ret=i;}
+   31 &       // else cout << " +++ \n";
+   32 &      }
+   33 &    //  cout << ret << endl;
+   34 &     return ret;
+   35 & }
+   36 & 
+   37 & func int usedARGV(string after)
+   38 & {
+   39 &   int ret=-1;
+   40 &   for(int i=ARGV.n-1;i>=0;--i)        
+   41 &        if(ARGV[i]==after) { ret=++i; break;}
+   42 &   if(ARGV.n<ret) ret=-1;
+   43 &   return ret;
+   44 & }
+   45 & 
+   46 & func int getARGV(int n,int default)
+   47 & {
+   48 &    int d=default;
+   49 &    int k=usedARGV(n);
+   50 &    if(k>0) d=strtol(ARGV[k]);
+   51 &     return d;
+   52 & }
+   53 & func real getARGV(int n,real default)
+   54 & {
+   55 &    real d=default;
+   56 &    int k=usedARGV(n);
+   57 &    if(k>0) d=strtod(ARGV[k]);
+   58 &    return d;
+   59 & }
+   60 & func string getARGV(int n,string default)
+   61 & {
+   62 &    string d=default;
+   63 &    int k=usedARGV(n);
+   64 &    if(k>0) d=ARGV[k];
+   65 &     return d;
+   66 & }
+   67 & 
+   68 & func int getARGV(string after,int default)
+   69 & {
+   70 &    int d=default;
+   71 &    int k=usedARGV(after);
+   72 &    if(k>0) d=strtol(ARGV[k]);
+   73 &     return d;
+   74 & }
+   75 & func real getARGV(string after,real default)
+   76 & {
+   77 &    real d=default;
+   78 &    int k=usedARGV(after);
+   79 &    if(k>0) d=strtod(ARGV[k]);
+   80 &    return d;
+   81 & }
+   82 & func string getARGV(string after,string default)
+   83 & {
+   84 &    string d=default;
+   85 &    int k=usedARGV(after);
+   86 &    if(k>0) d=ARGV[k];
+   87 &     return d;
+   88 & }
+   89 & 
+   90 & /*
+   91 & cout << getARGV(1,100) << endl;
+   92 & cout << getARGV(2,200.) << endl;
+   93 & cout << getARGV(3,"300.000") << endl;
+   94 & cout << getARGV("-n"," xxx") << endl;
+   95 & */
+   96 & ENDIFMACRO
+    8 :  macro getARGVidp 1 1 //
+    9 :  
+   10 :  
+   11 :  func int usedARGV(int n)
+   12 : {
+   13 :   int k=1,ii=1,kk=1,ret=-1;
+   14 :   for(int i=1;i<ARGV.n;++i)
+   15 :    {
+   16 :    // cout <<i<< " "<< ARGV[i] << " " <<(ARGV[i]=="-v") << " " << kk << "==" 
+   17 :    //      << n << " " << ARGV[i].rfind("dp") << " " <<ARGV[i].length-2  << endl;
+   18 :         
+   19 :        if(ARGV[i]=="-v") i++;
+   20 :        else if(ARGV[i]=="-fglut") i++;
+   21 :        else if(ARGV[i]=="-ffg") i++;
+   22 :        else if(ARGV[i]=="-glut") i++;
+   23 :        else if(ARGV[i]=="-f") i++;
+   24 :        else if(ARGV[i]=="-nw") ii;
+   25 :        else if(ARGV[i]=="-wait") ii;
+   26 :        else if(ARGV[i]=="-ne") ii;
+   27 :        else if(ARGV[i]=="-cd") ii;
+   28 :        //else if(ARGV[i].rfind(".edp")==ARGV[i].length-4 ) ii;
+   29 :        else if(i==1) ii;
+   30 :        else if(kk++==n) {ret=i;}
+   31 :       // else cout << " +++ \n";
+   32 :      }
+   33 :    //  cout << ret << endl;
+   34 :     return ret;
+   35 : }
+   36 : 
+   37 : func int usedARGV(string after)
+   38 : {
+   39 :   int ret=-1;
+   40 :   for(int i=ARGV.n-1;i>=0;--i)        
+   41 :        if(ARGV[i]==after) { ret=++i; break;}
+   42 :   if(ARGV.n<ret) ret=-1;
+   43 :   return ret;
+   44 : }
+   45 : 
+   46 : func int getARGV(int n,int default)
+   47 : {
+   48 :    int d=default;
+   49 :    int k=usedARGV(n);
+   50 :    if(k>0) d=strtol(ARGV[k]);
+   51 :     return d;
+   52 : }
+   53 : func real getARGV(int n,real default)
+   54 : {
+   55 :    real d=default;
+   56 :    int k=usedARGV(n);
+   57 :    if(k>0) d=strtod(ARGV[k]);
+   58 :    return d;
+   59 : }
+   60 : func string getARGV(int n,string default)
+   61 : {
+   62 :    string d=default;
+   63 :    int k=usedARGV(n);
+   64 :    if(k>0) d=ARGV[k];
+   65 :     return d;
+   66 : }
+   67 : 
+   68 : func int getARGV(string after,int default)
+   69 : {
+   70 :    int d=default;
+   71 :    int k=usedARGV(after);
+   72 :    if(k>0) d=strtol(ARGV[k]);
+   73 :     return d;
+   74 : }
+   75 : func real getARGV(string after,real default)
+   76 : {
+   77 :    real d=default;
+   78 :    int k=usedARGV(after);
+   79 :    if(k>0) d=strtod(ARGV[k]);
+   80 :    return d;
+   81 : }
+   82 : func string getARGV(string after,string default)
+   83 : {
+   84 :    string d=default;
+   85 :    int k=usedARGV(after);
+   86 :    if(k>0) d=ARGV[k];
+   87 :     return d;
+   88 : }
+   89 : 
+   90 : /*
+   91 : cout << getARGV(1,100) << endl;
+   92 : cout << getARGV(2,200.) << endl;
+   93 : cout << getARGV(3,"300.000") << endl;
+   94 : cout << getARGV("-n"," xxx") << endl;
+   95 : */
+   96 : 
+    2 : 
+    3 : // Parameters
+    4 : //real theta = 4.*pi/3.;
+    5 : macro Grad(u) [dx(u), dy(u)]  )   [dx(u), dy(u)] //
+    6 : //
+    7 : func z = 0;
+ *** Warning  The identifier z hide a Global identifier  
+
+    8 : func beta = 500;
+    9 : func co = 0.5;
+   10 : //func uexact = (x^2+y^2)^(1/4) * sin(atan(y/x)/2);
+   11 : func uexact = -1*(1/4)*((x^2 + y^2)-1);
+   12 : int n = getARGV("-n", 1);
+   13 : // Mesh
+   14 : //real d = 0.00001; //width of U-shape
+   15 : //border L1(t=0, 1-d){x=-1; y=-d-t;}
+   16 : //border L2(t=0, 1-d){x=-1; y=1-t;}
+   17 : //border B(t=0, 2){x=-1+t; y=-1;}
+   18 : //border C1(t=0, 1){x=t-1; y=d;}
+   19 : //border C2(t=0, 2*d){x=0; y=d-t;}
+   20 : //border C3(t=0, 1){x=-t; y=-d;}
+   21 : //border R(t=0, 2){x=1; y=-1+t;}
+   22 : //border T(t=0, 2){x=1-t; y=1;}
+   23 : //int n = 100;
+   24 : //mesh Th = buildmesh(L1(n/2) + L2(n/2) + B(n) + C1(n) + C2(3) + C3(n) + R(n) + T(n));
+   25 : 
+   26 : //for (int i = 0; i < ARGV.n; i++)
+   27 : //    cout << ARGV[i] << endl;
+   28 : //int n=ARGV[0];
+   29 : 
+   30 : //string d = getARGV("-d");
+   31 : string PREFIX = "n_"+n+"_results/";
+   32 : mesh Th = square(n,n);
+   33 : 
+   34 : // Fespace
+   35 : fespace Vh(Th, P2); //P2 conforming triangular FEM
+   36 : Vh phi, w, f=1;
+   37 : 
+   38 : // Solve
+   39 : //check the grad in the weak form
+   40 : solve Laplace(phi, w)
+   41 :     =  int2d(Th)(
+   42 :           //dx(phi)*dx(w)
+   43 :         //+ dy(phi)*dy(w)
+   44 :         Grad(phi)    [dx(phi), dy(phi)] ' * Grad(w)    [dx(w), dy(w)] 
+   45 :     )
+   46 :     - int2d(Th)(
+   47 :           f*w
+   48 :     )
+   49 :     //+ beta * int1d(Th)(phi*phi)
+   50 :      + on(1,2,3,4, phi=z)
+   51 : //    + on(L1,L2,B,C1,C2,C3,R,T, phi=z)
+   52 :     ;
+   53 : 
+   54 : // Plot
+   55 : //plot(phi, wait=true, ps="solution.eps"); //Plot phi
+   56 : //plot(Th, wait = true,  ps="mesh.eps" );
+   57 : 
+   58 : //Vh err = phi-(xˆ2+yˆ2-1)/4;
+   59 : //plot(err,value=true,wait=true);
+   60 : 
+   61 : //cout<<"L2 Error" << sqrt( int2d(Th)((phi-(xˆ2+yˆ2-1)/4)ˆ2) ) << endl;
+   62 : cout <<"L2 Error: " << sqrt(int2d(Th)((phi - uexact)^2));
+   63 : string path = PREFIX + "Th.msh";
+   64 : // Save mesh
+   65 : //savemesh(Th,path);// Parameters
+   66 : 
+   67 : 
+   68 : 
+   69 : //to build a gnuplot data file
+   70 : {
+   71 :     ofstream ff(PREFIX+"data.csv");
+   72 :     for (int i = 0; i < Th.nt; i++)
+   73 :     {
+   74 :         for (int j = 0; j < 3; j++)
+   75 :             ff << Th[i][j].x << ","<< Th[i][j].y << "," << phi[][Vh(i,j)] << endl;
+   76 : 
+   77 :         ff << Th[i][0].x << "," << Th[i][0].y << "," << phi[][Vh(i,0)] <<
+   78 :         "\n\n\n";
+   79 :     }
+   80 : }
+   81 :  sizestack + 1024 =2456  ( 1432 )
+
+  -- Square mesh : nb vertices  =36 ,  nb triangles = 50 ,  nb boundary edges 20
+  -- Solve : 
+          min -8.94996e-50  max 0.0736294
+L2 Error: 0.0412217times: compile 0.081247s, execution 0.237183s,  mpirank:0
+ CodeAlloc : nb ptr  3503,  size :428952 mpirank: 0
+Ok: Normal End

@@ -1,0 +1,80 @@
+include "getARGV.idp"
+
+// Parameters
+//real theta = 4.*pi/3.;
+macro Grad(u) [dx(u), dy(u)] //
+//
+func z = 0;
+func beta = 500;
+func co = 0.5;
+//func uexact = (x^2+y^2)^(1/4) * sin(atan(y/x)/2);
+func uexact = -1*(1/4)*((x^2 + y^2)-1);
+int n = getARGV("-n", 1);
+// Mesh
+//real d = 0.00001; //width of U-shape
+//border L1(t=0, 1-d){x=-1; y=-d-t;}
+//border L2(t=0, 1-d){x=-1; y=1-t;}
+//border B(t=0, 2){x=-1+t; y=-1;}
+//border C1(t=0, 1){x=t-1; y=d;}
+//border C2(t=0, 2*d){x=0; y=d-t;}
+//border C3(t=0, 1){x=-t; y=-d;}
+//border R(t=0, 2){x=1; y=-1+t;}
+//border T(t=0, 2){x=1-t; y=1;}
+//int n = 100;
+//mesh Th = buildmesh(L1(n/2) + L2(n/2) + B(n) + C1(n) + C2(3) + C3(n) + R(n) + T(n));
+
+//for (int i = 0; i < ARGV.n; i++)
+//    cout << ARGV[i] << endl;
+//int n=ARGV[0];
+
+//string d = getARGV("-d");
+string PREFIX = "n_"+n+"_results/";
+mesh Th = square(n,n);
+
+// Fespace
+fespace Vh(Th, P2); //P2 conforming triangular FEM
+Vh phi, w, f=1;
+
+// Solve
+//check the grad in the weak form
+solve Laplace(phi, w)
+    =  int2d(Th)(
+          //dx(phi)*dx(w)
+        //+ dy(phi)*dy(w)
+        Grad(phi)' * Grad(w)
+    )
+    - int2d(Th)(
+          f*w
+    )
+    //+ beta * int1d(Th)(phi*phi)
+     + on(1,2,3,4, phi=z)
+//    + on(L1,L2,B,C1,C2,C3,R,T, phi=z)
+    ;
+
+// Plot
+//plot(phi, wait=true, ps="solution.eps"); //Plot phi
+//plot(Th, wait = true,  ps="mesh.eps" );
+
+//Vh err = phi-(xˆ2+yˆ2-1)/4;
+//plot(err,value=true,wait=true);
+
+//cout<<"L2 Error" << sqrt( int2d(Th)((phi-(xˆ2+yˆ2-1)/4)ˆ2) ) << endl;
+cout <<"L2 Error: " << sqrt(int2d(Th)((phi - uexact)^2));
+string path = PREFIX + "Th.msh";
+// Save mesh
+//savemesh(Th,path);// Parameters
+
+
+
+//to build a gnuplot data file
+{
+    ofstream ff(PREFIX+"data.csv");
+    for (int i = 0; i < Th.nt; i++)
+    {
+        for (int j = 0; j < 3; j++)
+            ff << Th[i][j].x << ","<< Th[i][j].y << "," << phi[][Vh(i,j)] << endl;
+
+        ff << Th[i][0].x << "," << Th[i][0].y << "," << phi[][Vh(i,0)] <<
+        "\n\n\n";
+    }
+}

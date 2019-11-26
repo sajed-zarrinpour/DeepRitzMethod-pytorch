@@ -1,0 +1,19 @@
+set xlabel "x"    
+set ylabel "y"
+
+set datafile separator ","
+set palette rgbformulae 30,31,32
+set pm3d map
+
+if (!exists("ARG1")) file='data.csv'
+if (exists("ARG3")) set title ARG3  
+#splot ARG1 w l pal
+
+pause -1 "Hit any key to continue\n"
+
+set term png
+set output ARG2
+
+splot ARG1 w l pal
+replot
+
